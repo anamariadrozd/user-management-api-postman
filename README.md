@@ -1,10 +1,63 @@
 # User Management API Testing
 
-## Overview
+## Project Overview
 
-This project demonstrates API testing skills using **Postman** by testing the User Management API provided by ReqRes.
+This project demonstrates API testing skills using Postman by testing the ReqRes User Management API.
 
-The collection includes positive and negative test scenarios covering authentication, CRUD operations, response validation, and data validation.
+The collection covers authentication, CRUD operations, response validation, data validation, and negative test scenarios. Each request contains automated JavaScript assertions to verify both functional and non-functional API behavior.
+
+---
+
+## Project Objectives
+
+- Validate REST API endpoints
+- Verify HTTP status codes
+- Validate response payloads
+- Verify response headers
+- Check response time
+- Perform positive and negative testing
+- Practice API automation using Postman
+
+---
+
+## API Endpoints Tested
+
+### Authentication
+- Login
+
+### User Management
+- Get Users
+- Get Single User
+- Create User
+- Update User (PUT)
+- Partially Update User (PATCH)
+- Delete User
+
+### Negative Scenarios
+- User Not Found
+- Invalid User ID
+- Empty Request Body
+- Invalid Data Types
+
+---
+
+## Validation Performed
+
+The collection includes automated validation for:
+
+- HTTP Status Codes
+- Response Time
+- Content-Type
+- JSON Response Structure
+- Required Fields
+- Data Types
+- Email Format
+- URL Format
+- Pagination
+- Timestamp Format
+- Empty Response Validation
+
+---
 
 ## Technologies
 
@@ -13,66 +66,7 @@ The collection includes positive and negative test scenarios covering authentica
 - REST API
 - JSON
 
-## API Under Test
-
-https://reqres.in/
-
-## Test Scenarios
-
-### Authentication
-- Login
-- Authentication token validation
-
-### Users
-- Get Users
-- Get Single User
-- Create User
-- Update User (PUT)
-- Partially Update User (PATCH)
-- Delete User
-
-### Negative Tests
-- User Not Found
-- Invalid User ID
-- Empty Body
-- Invalid Data Types
-
-## Validations
-
-The collection includes validation for:
-
-- Status codes
-- Response time
-- Content-Type
-- Response structure
-- Required fields
-- Data types
-- Email format
-- URL format
-- Pagination
-- Timestamp format
-- Empty responses
-
-## Skills Demonstrated
-
-- REST API Testing
-- CRUD Operations Testing
-- Positive Testing
-- Negative Testing
-- API Response Validation
-- JavaScript Assertions
-- Postman Test Scripts
-
-## How to Run
-
-1. Import the Postman collection.
-2. Configure the `baseUrl` environment variable.
-3. Run the requests individually or execute the entire collection using the Collection Runner.
-
-## Author
-
-Ana
-
+---
 
 ## Screenshots
 
@@ -87,3 +81,15 @@ Ana
 ### Single User Test
 
 ![Single User Test](screenshots/single-user-test.png)
+
+---
+
+## Notes
+
+Some negative scenarios (such as invalid data types or empty request bodies) return **201 Created** because the ReqRes API is a public demo API and does not enforce strict server-side validation. These tests are included to demonstrate how such behavior can be identified and documented during API testing.
+
+---
+
+## Author
+
+Ana

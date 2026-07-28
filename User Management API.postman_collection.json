@@ -1,0 +1,851 @@
+{
+  "info": {
+    "_postman_id": "f1ba1591-5ff9-4f7b-8a77-295e67d3eeae",
+    "name": "User Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52206775",
+    "_collection_link": "https://go.postman.co/collection/52206775-f1ba1591-5ff9-4f7b-8a77-295e67d3eeae?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Status code is 200\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Validate authentication token\r",
+                  "const responseBody = pm.response.json();\r",
+                  "const token = responseBody.token;\r",
+                  "\r",
+                  "pm.test(\"Token is returned\", function () {\r",
+                  "    pm.expect(token).to.exist;\r",
+                  "    pm.expect(token).to.not.be.empty;\r",
+                  "    pm.expect(token).to.be.a(\"string\");\r",
+                  "    pm.expect(token.length).to.be.above(10);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"cityslicka\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "const responseBody = pm.response.json();\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Content-Type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "// Response structure\r",
+                  "pm.test(\"Response body contains 'data' property\", function () {\r",
+                  "    pm.expect(responseBody).to.have.property(\"data\");\r",
+                  "});\r",
+                  "pm.test(\"Data is an array of objects and is not empty\", function () {\r",
+                  "    pm.expect(responseBody.data).to.be.an('array');\r",
+                  "    pm.expect(responseBody.data).to.have.length.above(0);\r",
+                  "});\r",
+                  "// Validate each user object\r",
+                  "pm.test(\"Each user has valid structure and data\", function () {\r",
+                  "\r",
+                  "    responseBody.data.forEach(function (user) {\r",
+                  "\r",
+                  "        pm.expect(user).to.have.property(\"id\");\r",
+                  "        pm.expect(user).to.have.property(\"email\");\r",
+                  "        pm.expect(user).to.have.property(\"first_name\");\r",
+                  "        pm.expect(user).to.have.property(\"last_name\");\r",
+                  "        pm.expect(user).to.have.property(\"avatar\");\r",
+                  "\r",
+                  "        pm.expect(user.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(user.email).to.be.a(\"string\");\r",
+                  "        pm.expect(user.email).to.include(\"@\");\r",
+                  "        pm.expect(user.email).to.not.be.empty;\r",
+                  "\r",
+                  "        pm.expect(user.first_name).to.be.a(\"string\");\r",
+                  "        pm.expect(user.first_name).to.not.be.empty;\r",
+                  "\r",
+                  "        pm.expect(user.last_name).to.be.a(\"string\");\r",
+                  "        pm.expect(user.last_name).to.not.be.empty;\r",
+                  "\r",
+                  "        pm.expect(user.avatar).to.be.a(\"string\");\r",
+                  "        pm.expect(user.avatar).to.match(/^https?:\\/\\//);\r",
+                  "        pm.expect(user.avatar).to.not.be.empty;\r",
+                  "    });\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination tests\", function () {\r",
+                  "    pm.expect(responseBody.page).to.equal(2);\r",
+                  "    pm.expect(responseBody.per_page).to.equal(6);\r",
+                  "    pm.expect(responseBody.total).to.equal(12);\r",
+                  "    pm.expect(responseBody.total_pages).to.equal(2);\r",
+                  "});\r",
+                  "pm.test(\"Returned users do not exceed per_page\", function () {\r",
+                  "    if (responseBody.page < responseBody.total_pages) {\r",
+                  "        pm.expect(responseBody.data.length).to.equal(responseBody.per_page);\r",
+                  "    } else {\r",
+                  "        pm.expect(responseBody.data.length).to.be.at.most(responseBody.per_page);\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Single User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response time is less than 1000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "pm.test(\"Content type is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "// Response structure",
+                  "const responseBody = pm.response.json();",
+                  "pm.test(\"Response body has correct structure\", function () {",
+                  "    pm.expect(responseBody).to.have.property(\"data\");",
+                  "    pm.expect(responseBody).to.have.property(\"support\");",
+                  "    pm.expect(responseBody).to.have.property(\"_meta\");",
+                  "",
+                  "    pm.expect(responseBody.data).to.have.property(\"id\");",
+                  "    pm.expect(responseBody.data).to.have.property(\"email\");",
+                  "    pm.expect(responseBody.data).to.have.property(\"first_name\");",
+                  "    pm.expect(responseBody.data).to.have.property(\"last_name\");",
+                  "    pm.expect(responseBody.data).to.have.property(\"avatar\");",
+                  "",
+                  "    pm.expect(responseBody.support).to.have.property(\"url\");",
+                  "    pm.expect(responseBody.support).to.have.property(\"text\");",
+                  "",
+                  "    pm.expect(responseBody._meta).to.have.property(\"powered_by\");",
+                  "    pm.expect(responseBody._meta).to.have.property(\"cta\");",
+                  "    pm.expect(responseBody._meta.cta).to.have.property(\"label\");",
+                  "    pm.expect(responseBody._meta.cta).to.have.property(\"url\");",
+                  "",
+                  "});",
+                  "",
+                  "// Data Validation",
+                  "const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;  // Valid email format: text@text.domain",
+                  "const urlRegex = /^https?:\\/\\/.+$/;               // Valid URL format: starts with http:// or https://",
+                  "",
+                  "pm.test(\"Data object validation\", function () {",
+                  "    // 'id' data validation  ",
+                  "    pm.expect(responseBody.data.id).to.equal(2);",
+                  "    pm.expect(responseBody.data.id).to.be.a(\"number\");",
+                  "",
+                  "    // 'email' data validation  ",
+                  "    pm.expect(responseBody.data.email).to.match(emailRegex);",
+                  "",
+                  "    // 'first_name' data validation  ",
+                  "    pm.expect(responseBody.data.first_name).to.be.a(\"string\");",
+                  "    pm.expect(responseBody.data.first_name.trim()).to.not.be.empty;",
+                  "",
+                  "    // 'last_name' data validation  ",
+                  "    pm.expect(responseBody.data.last_name).to.be.a(\"string\");",
+                  "    pm.expect(responseBody.data.last_name.trim()).to.not.be.empty;",
+                  "",
+                  "    // 'avatar' data validation",
+                  "    pm.expect(responseBody.data.avatar).to.match(urlRegex);",
+                  "});",
+                  "",
+                  "pm.test(\"'Support' object validation\", function () {",
+                  "    // 'url' data validation  ",
+                  "    pm.expect(responseBody.support.url).to.match(urlRegex);",
+                  "    // 'text' data validation  ",
+                  "    pm.expect(responseBody.support.text).to.be.a(\"string\");",
+                  "    pm.expect(responseBody.support.text.trim()).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"'Meta' object validation\", function () {",
+                  "    // 'powered_by' data validation  ",
+                  "    pm.expect(responseBody._meta.powered_by).to.be.a(\"string\");",
+                  "    pm.expect(responseBody._meta.powered_by.trim()).to.not.be.empty;",
+                  "    // 'cta' data validation  ",
+                  "    pm.expect(responseBody._meta.cta.label).to.be.a(\"string\");",
+                  "    pm.expect(responseBody._meta.cta.label.trim()).to.not.be.empty;",
+                  "    pm.expect(responseBody._meta.cta.url).to.match(urlRegex);",
+                  "",
+                  "});",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Content type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "});\r",
+                  "// Response structure\r",
+                  "const responseBody = pm.response.json();\r",
+                  "pm.test(\"Response body has correct structure\", function () {\r",
+                  "    pm.expect(responseBody).to.have.property(\"name\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"job\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"updatedAt\");\r",
+                  "});\r",
+                  "//Response validation\r",
+                  "const dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;\r",
+                  "pm.test(\"Response body has correct values\", function () {\r",
+                  "    pm.expect(responseBody.name).to.equal(\"John\");\r",
+                  "    pm.expect(responseBody.job).to.equal(\"Senior QA Engineer\");\r",
+                  "    pm.expect(responseBody.updatedAt).to.match(dateRegex);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"John\",\r\n  \"job\": \"Senior QA Engineer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Content type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "});\r",
+                  "// Response Structure\r",
+                  "const responseBody = pm.response.json();\r",
+                  "pm.test(\"Response body has correct structure\", function () {\r",
+                  "    pm.expect(responseBody).to.have.property(\"name\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"job\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"id\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"createdAt\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"_meta\");\r",
+                  "});\r",
+                  "//Response validation\r",
+                  "const dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;\r",
+                  "pm.test(\"Response body has correct values\", function () {\r",
+                  "    pm.expect(responseBody.name).to.equal(\"John\");\r",
+                  "    pm.expect(responseBody.job).to.equal(\"QA Engineer\");\r",
+                  "    pm.expect(responseBody.id).to.match(/^\\d+$/);// ID must consist of one or more digits.\r",
+                  "    pm.expect(responseBody.createdAt).to.match(dateRegex);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"John\",\r\n    \"job\": \"QA Engineer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Partially Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Content type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "});\r",
+                  "// Response structure\r",
+                  "const responseBody = pm.response.json();\r",
+                  "pm.test(\"Response body has correct structure\", function () {\r",
+                  "    pm.expect(responseBody).to.have.property(\"job\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"updatedAt\");\r",
+                  "});\r",
+                  "//Response validation\r",
+                  "const dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;\r",
+                  "pm.test(\"Response body has correct values\", function () {\r",
+                  "    pm.expect(responseBody.job).to.equal(\"Senior QA Engineer\");\r",
+                  "    pm.expect(responseBody.updatedAt).to.match(dateRegex);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"job\": \"Senior QA Engineer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "// Response Body\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "item": [
+        {
+          "name": "User Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//HTTP response\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Response body is an empty object\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"{}\");\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid User ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//HTTP response\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Response body is an empty object\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"{}\");\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "abc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Empty Body",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Content type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "});\r",
+                  "// Response Structure\r",
+                  "const responseBody = pm.response.json();\r",
+                  "pm.test(\"Response body has correct structure\", function () {\r",
+                  "    pm.expect(responseBody).to.have.property(\"id\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"createdAt\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"_meta\");\r",
+                  "});\r",
+                  "//Response validation\r",
+                  "const dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;\r",
+                  "pm.test(\"Response body has correct values\", function () {\r",
+                  "    pm.expect(responseBody.id).to.match(/^\\d+$/);// ID must consist of one or more digits.\r",
+                  "    pm.expect(responseBody.createdAt).to.match(dateRegex);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Data Types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// HTTP Response\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test(\"Response time is less than 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Content type is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "});\r",
+                  "// Response status    \r",
+                  "pm.test(\"Response does not contain name and job\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(responseBody).to.not.have.property(\"name\");\r",
+                  "    pm.expect(responseBody).to.not.have.property(\"job\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"id\");\r",
+                  "    pm.expect(responseBody).to.have.property(\"createdAt\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": 123,\r\n  \"job\": true\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "x-api-key",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

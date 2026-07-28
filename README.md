@@ -72,3 +72,18 @@ The collection includes validation for:
 ## Author
 
 Ana
+
+
+## Screenshots
+
+### Collection Runner
+
+![Collection Runner](screenshots/run-results.png)
+
+### Collection Structure & Authorization
+
+![Collection Structure & Authorization](screenshots/collection-structure&authorization.png)
+
+### Single User Test
+
+![Single User Test](screenshots/single-user-test.png)
